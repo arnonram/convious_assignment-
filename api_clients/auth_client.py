@@ -1,14 +1,9 @@
 import requests
-import json
-import os
-from dotenv import load_dotenv
-
-from bae_client_session import BaseClientSession
+from api_clients.bae_client_session import BaseClientSession
 
 
 class AuthClient:
     def __init__(self):
-        load_dotenv()
         self.session = BaseClientSession()
 
     def create_user(self, username, password, email):
