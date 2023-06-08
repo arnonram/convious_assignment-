@@ -17,19 +17,19 @@ class UsersClient:
                 f"Failed to create user {user.username} \n{response.text}"
             )
 
-    def get_user_token(self, username, password):
+    def get_user_token(self, username, password) -> str:
         payload = {"username": username, "password": password}
         response = self.session.post("/auth/token/login", json=payload)
 
         if response.status_code >= 200 and response.status_code < 300:
             print("User token generated successfully")
-            return response.json()
+            return response.json()["auth_token"]
         else:
             raise requests.exceptions.RequestException(
                 f"Failed to generate user token: {response.text}"
             )
 
-    def authtenicat_user(self, token):
+    def authenticate_user(self, token):
         response = self.session.get("/auth/users/me/", json={"token": token})
 
         if response.status_code >= 200 and response.status_code < 300:

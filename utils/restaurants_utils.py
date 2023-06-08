@@ -2,7 +2,7 @@ from faker import Faker
 from api_clients.restaurants_client import RestaurantsClient
 
 
-def create_restaurants(
+def create_random_restaurants(
     restaurants_client: RestaurantsClient, number_of_restaurants: int
 ):
     fake = Faker()

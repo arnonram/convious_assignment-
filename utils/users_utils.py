@@ -4,7 +4,7 @@ from api_clients.models.user import User, UsersTokens
 from api_clients.users_client import UsersClient
 
 
-def create_user(number_of_users: int) -> List[UsersTokens]:
+def create_random_user(number_of_users: int) -> List[UsersTokens]:
     users_tokens = [UsersTokens]
     user_client = UsersClient()
     users = create_users_list(number_of_users)
