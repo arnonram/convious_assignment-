@@ -1,50 +1,27 @@
+import os
 import requests
-from api_clients.bae_client_session import BaseClientSession
 
 
 class RestaurantsClient:
-    def __init__(self):
-        self.session = BaseClientSession()
-        self.session.headers.update({"Authorization": f"Token {auth_token}"})
+    def __init__(self, auth_token: str):
+        self.url_base = os.getenv("BASE_URL")
+        self.api_version = os.getenv("API_VERSION")
 
-    def get_restaurants(self):
-        response = self.session.get("/restaurants/")
-        if response.status_code >= 200 and response.status_code < 300:
-            print("Restaurants list retrieved successfully")
-            return response.json()
-        else:
-            raise requests.exceptions.RequestException(
-                f"Failed to retrieve restaurants list: \n{response.text}"
-            )
+        self.request = requests.Session()
+        self.base_url = f"{self.url_base}{self.api_version}"
+        self.request.headers.update({"Content-Type": "application/json"})
+        self.request.headers.update({"Authorization": f"Token {auth_token}"})
 
-    def create_restaurant(self, name):
+    def get_restaurants(self) -> requests.Response:
+        return self.request.get(f"{self.base_url}/restaurants/")
+
+    def create_restaurant(self, name) -> requests.Response:
         payload = {"name": name}
-        response = self.session.post("/restaurants/", json=payload)
-        if response.status_code >= 200 and response.status_code < 300:
-            print("Restaurant created successfully")
-            return response.json()
-        else:
-            raise requests.exceptions.RequestException(
-                f"Failed to create restaurant: \n{response.text}"
-            )
+        return self.request.post(f"{self.base_url}/restaurants/", json=payload)
 
-    def update_restaurant(self, id, name):
+    def update_restaurant(self, id, name) -> requests.Response:
         payload = {"name": name}
-        response = self.session.put(f"/restaurants/{id}/", json=payload)
-        if response.status_code >= 200 and response.status_code < 300:
-            print("Restaurant updated successfully")
-            return response.json()
-        else:
-            raise requests.exceptions.RequestException(
-                f"Failed to update restaurant: \n{response.text}"
-            )
+        return self.request.put(f"{self.base_url}/restaurants/{id}/", json=payload)
 
-    def delete_restaurant(self, id):
-        response = self.session.delete(f"/restaurants/{id}/")
-        if response.status_code >= 200 and response.status_code < 300:
-            print("Restaurant deleted successfully")
-            return response.json()
-        else:
-            raise requests.exceptions.RequestException(
-                f"Failed to delete restaurant: \n{response.text}"
-            )
+    def delete_restaurant(self, id) -> requests.Response:
+        return self.request.delete(f"{self.base_url}/restaurants/{id}/")

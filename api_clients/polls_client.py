@@ -1,52 +1,29 @@
+import os
 import requests
-from api_clients.bae_client_session import BaseClientSession
 
 
 class PollsClient:
-    def __init__(self, auth_token):
-        self.session = BaseClientSession()
-        self.session.headers.update({"Authorization": f"Token {auth_token}"})
+    def __init__(self, auth_token: str):
+        self.url_base = os.getenv("BASE_URL")
+        self.api_version = os.getenv("API_VERSION")
 
-    def get_todays_poll(self):
-        response = self.session.get("/polls/today/")
-        if response.status_code >= 200 and response.status_code < 300:
-            print("Polls list retrieved successfully")
-            return response.json()
-        else:
-            raise requests.exceptions.RequestException(
-                f"Failed to retrieve polls list: \n{response.text}"
-            )
+        self.request = requests.Session()
+        self.base_url = f"{self.url_base}{self.api_version}"
+        self.request.headers.update({"Content-Type": "application/json"})
+        self.request.headers.update({"Authorization": f"Token {auth_token}"})
 
-    def vote_for_restaurant(self, restaurant_id):
+    def get_todays_poll(self) -> requests.Response:
+        return self.request.get(f"{self.base_url}/polls/today/")
+
+    def vote_for_restaurant(self, restaurant_id) -> requests.Response:
         payload = {"restaurant_id": restaurant_id}
-        response = self.session.post("/polls/vote/", json=payload)
-        if response.status_code >= 200 and response.status_code < 300:
-            print(f"Added vote to {restaurant_id}")
-            return response.json()
-        else:
-            raise requests.exceptions.RequestException(
-                f"Failed to vote for restaurant {restaurant_id} \n{response.text}"
-            )
+        return self.request.post(f"{self.base_url}/polls/vote/", json=payload)
 
-    def get_polls_history(self, from_date, to_date):
-        response = self.session.get(
-            "/polls/history/", params={"from": from_date, "to": to_date}
+    def get_polls_history(self, from_date, to_date) -> requests.Response:
+        return self.request.get(
+            f"{self.base_url}/polls/history/", params={"from": from_date, "to": to_date}
         )
-        if response.status_code >= 200 and response.status_code < 300:
-            print("Polls history retrieved successfully")
-            return response.json()
-        else:
-            raise requests.exceptions.RequestException(
-                f"Failed to retrieve polls history: \n{response.text}"
-            )
 
-    def reset_polls_for_date(self, date):
+    def reset_polls_for_date(self, date) -> requests.Response:
         payload = {"date": date}
-        response = self.session.post("/polls/reset/", json=payload)
-        if response.status_code >= 200 and response.status_code < 300:
-            print("Polls reset successfully")
-            return response.json()
-        else:
-            raise requests.exceptions.RequestException(
-                f"Failed to reset polls: \n{response.text}"
-            )
+        return self.request.post(f"{self.base_url}/polls/reset/", json=payload)
