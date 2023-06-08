@@ -1,20 +1,20 @@
 import requests
+from models.user import User
 from api_clients.bae_client_session import BaseClientSession
 
 
-class AuthClient:
+class UsersClient:
     def __init__(self):
         self.session = BaseClientSession()
 
-    def create_user(self, username, password, email):
-        payload = {"username": username, "password": password, "email": email}
-        response = self.session.post("/auth/users/create", json=payload)
+    def create_user(self, user: User):
+        response = self.session.post("/auth/users/create", json=User)
 
         if response.status_code >= 200 and response.status_code < 300:
-            print(f"User {username} created successfully")
+            print(f"User {user.username} created successfully")
         else:
             raise requests.exceptions.RequestException(
-                f"Failed to create user {username} \n{response.text}"
+                f"Failed to create user {user.username} \n{response.text}"
             )
 
     def get_user_token(self, username, password):

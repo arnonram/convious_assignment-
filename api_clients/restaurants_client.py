@@ -5,6 +5,7 @@ from api_clients.bae_client_session import BaseClientSession
 class RestaurantsClient:
     def __init__(self):
         self.session = BaseClientSession()
+        self.session.headers.update({"Authorization": f"Token {auth_token}"})
 
     def get_restaurants(self):
         response = self.session.get("/restaurants/")

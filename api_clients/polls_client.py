@@ -3,8 +3,9 @@ from api_clients.bae_client_session import BaseClientSession
 
 
 class PollsClient:
-    def __init__(self):
+    def __init__(self, auth_token):
         self.session = BaseClientSession()
+        self.session.headers.update({"Authorization": f"Token {auth_token}"})
 
     def get_todays_poll(self):
         response = self.session.get("/polls/today/")
