@@ -124,13 +124,7 @@ class TestPollsVotes:
         restauran_list = create_random_restaurants(restaurantClient, 2)
         users = create_random_user(2)
 
-        for user in users:
-            for restaurant in restauran_list:
-                user_under_test_client = PollsClient(user.auth_token)
-                user_under_test_client.vote_for_restaurant(restaurant["id"])
-
-        todays_poll = pollsClient.get_todays_poll()
-        assert todays_poll.json()["top"]["score"] > 4
+        self.vote_all_users_restaurants_and_verify(restauran_list, users)
 
         reset_resp = pollsClient.reset_polls_for_date(today())
         assert reset_resp.status_code == 200
@@ -143,6 +137,8 @@ class TestPollsVotes:
             assert restaurant["score"] == 0
             assert restaurant["voters"] == 0
 
+        self.vote_all_users_restaurants_and_verify(restauran_list, users)
+
     def test_should_get_OK_when_reset_poll_for_non_existent_date(self):
         reset_resp = pollsClient.reset_polls_for_date("3001-12-12")
         assert reset_resp.status_code == 200
@@ -153,3 +149,13 @@ class TestPollsVotes:
         assert reset_resp.status_code == 400
         reset_resp = pollsClient.reset_polls_for_date("12-12-3001")
         assert reset_resp.status_code == 400
+
+    # Test Utils functions
+    def vote_all_users_restaurants_and_verify(self, restauran_list, users):
+        for user in users:
+            for restaurant in restauran_list:
+                user_under_test_client = PollsClient(user.auth_token)
+                user_under_test_client.vote_for_restaurant(restaurant["id"])
+
+        todays_poll = pollsClient.get_todays_poll()
+        assert todays_poll.json()["top"]["score"] > 4

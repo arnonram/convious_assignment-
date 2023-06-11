@@ -102,7 +102,7 @@ class TestRestaurantsCRUD:
         assert update_resp.status_code == 200
         assert update_resp.json()["name"] == "Updated Restaurant"
 
-    def test_should_get_404_when_update_restaurant_with_empty_name(self, _faker):
+    def test_should_get_400_when_update_restaurant_with_empty_name(self, _faker):
         create_resp = restaurantClient.create_restaurant(
             f"{_faker.first_name()} Restaurant"
         )
@@ -121,7 +121,7 @@ class TestRestaurantsCRUD:
         assert update_resp.status_code == 404
         assert update_resp.json()["detail"] == "Not found."
 
-    def test_should_get_201_when_delete_restaurant_and_delete_only_selected_restaurant(
+    def test_should_get_204_when_delete_restaurant_and_delete_only_selected_restaurant(
         self,
     ):
         create_resp = create_random_restaurants(restaurantClient, 5)
