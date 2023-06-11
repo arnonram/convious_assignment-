@@ -22,7 +22,7 @@ def create_users_list(number_of_users: int) -> List:
     for i in range(number_of_users):
         user_name = fake.user_name()
         user = User(
-            fake.user_name(),
+            f"{fake.user_name()}_{i}",
             f"{user_name}@{fake.free_email_domain()}",
             fake.password(length=10),
         )
