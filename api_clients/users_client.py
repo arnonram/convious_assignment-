@@ -1,6 +1,7 @@
+import json
 import os
 import requests
-from api_clients.models.user import User
+from api_clients.models.user_model import User
 
 
 class UsersClient:
@@ -13,19 +14,19 @@ class UsersClient:
         self.request.headers.update({"Content-Type": "application/json"})
         self.request.headers.update(baseurl=self.base_url)
 
-    def create_user(self, user: User):
-        response = self.request.post(f"{self.base_url}/auth/users/create", json=User)
+    def create_user(self, user):
+        response = self.request.post(
+            f"{self.base_url}/auth/users/create", data=json.dumps(user.__dict__)
+        )
 
-        if response.status_code >= 200 and response.status_code < 300:
+        if response.status_code == 201:
             print(f"User {user.username} created successfully")
         else:
             raise requests.exceptions.RequestException(
                 f"Failed to create user {user.username} \n{response.text}"
             )
 
-    def get_user_token(
-        self, username=os.getenv("BASE_USER"), password=os.getenv("BASE_PASSWORD")
-    ) -> str:
+    def get_user_token(self, username: str, password: str) -> str:
         payload = {"username": username, "password": password}
         response = self.request.post(f"{self.base_url}/auth/token/login", json=payload)
 

@@ -1,8 +1,11 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class User:
-    def __init__(self, username: str, email: str, password: str):
-        self.username = username
-        self.email = email
-        self.password = password
+    username: str
+    email: str
+    password: str
 
 
 class UsersTokens:
